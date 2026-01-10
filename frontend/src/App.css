@@ -301,3 +301,19 @@ textarea:focus {
     transform: translateY(0);
   }
 }
+
+/* 通用淡入动画，页面/卡片切换更丝滑 */
+.fade-soft {
+  animation: fadeSoft 0.3s ease;
+}
+
+@keyframes fadeSoft {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

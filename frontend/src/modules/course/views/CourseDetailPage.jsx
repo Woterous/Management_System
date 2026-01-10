@@ -129,7 +129,7 @@ export default function CourseDetailPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pb-24 font-sans antialiased">
+    <div className="min-h-screen bg-[#F8FAFC] pb-24 font-sans antialiased fade-soft">
       {/* Sticky Header */}
       <div className="bg-white/80 backdrop-blur-xl sticky top-0 z-40 border-b border-slate-100 px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
