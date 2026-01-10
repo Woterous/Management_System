@@ -23,8 +23,17 @@ pool.query('select 1').then(() => {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || true,
+  credentials: true,
+}));
+
 app.use(express.json());
+
+console.log('NODE_ENV=', process.env.NODE_ENV);
+console.log('PORT=', PORT);
+console.log('Has DATABASE_URL=', !!process.env.DATABASE_URL);
+console.log('Has JWT_SECRET=', !!process.env.JWT_SECRET);
 
 // Health
 app.get('/health', (req, res) => res.json({ ok: true }));
