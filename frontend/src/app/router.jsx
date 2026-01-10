@@ -20,41 +20,36 @@ function RequireAuth() {
 }
 
 function AppLayout() {
+  const navItems = [
+    { to: '/', label: '课表', icon: '📅' },
+    { to: '/courses', label: '课程', icon: '📚' },
+    { to: '/students', label: '学生', icon: '👥' },
+  ];
+
   return (
     <div className="app-shell">
-      <aside className="app-sidebar">
-        <h2 style={{ marginTop: 0 }}>签到管理</h2>
-        <nav>
-          <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : undefined)}>
-            本周课表
-          </NavLink>
-          <NavLink to="/courses" className={({ isActive }) => (isActive ? 'active' : undefined)}>
-            课程列表
-          </NavLink>
-          <NavLink to="/courses/new" className={({ isActive }) => (isActive ? 'active' : undefined)}>
-            新建课程
-          </NavLink>
-          <NavLink to="/students" className={({ isActive }) => (isActive ? 'active' : undefined)}>
-            学生列表
-          </NavLink>
-          <NavLink to="/students/new" className={({ isActive }) => (isActive ? 'active' : undefined)}>
-            新建学生
-          </NavLink>
-          <button
-            className="button secondary"
-            style={{ marginTop: 16, width: '100%' }}
-            onClick={() => {
-              clearToken();
-              window.location.href = '/login';
-            }}
-          >
-            退出
-          </button>
-        </nav>
-      </aside>
       <main className="app-main">
         <Outlet />
       </main>
+      <nav className="bottom-nav">
+        {navItems.map((item) => (
+          <NavLink key={item.to} to={item.to} end={item.to === '/'} className={({ isActive }) => (isActive ? 'bottom-nav-item active' : 'bottom-nav-item')}>
+            <span className="bottom-nav-icon">{item.icon}</span>
+            <span className="bottom-nav-label">{item.label}</span>
+          </NavLink>
+        ))}
+        <button
+          type="button"
+          className="bottom-nav-item"
+          onClick={() => {
+            clearToken();
+            window.location.href = '/login';
+          }}
+        >
+          <span className="bottom-nav-icon">🚪</span>
+          <span className="bottom-nav-label">退出</span>
+        </button>
+      </nav>
     </div>
   );
 }

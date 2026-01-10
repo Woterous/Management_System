@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createSession } from '../service/sessionService';
 
@@ -25,10 +25,57 @@ function buildCalendarGrid(monthDate) {
   return cells;
 }
 
-const hourOptions = Array.from({ length: 24 }, (_, h) => String(h).padStart(2, '0'));
-const minuteOptions = Array.from({ length: 12 }, (_, idx) => String(idx * 5).padStart(2, '0'));
+const hourOptions = Array.from({ length: 24 }, (_, h) => ({
+  value: String(h).padStart(2, '0'),
+  label: `${String(h).padStart(2, '0')} 时`,
+}));
+const minuteOptions = Array.from({ length: 12 }, (_, idx) => ({
+  value: String(idx * 5).padStart(2, '0'),
+  label: `${String(idx * 5).padStart(2, '0')} 分`,
+}));
 
 const weekdayLabels = ['日', '一', '二', '三', '四', '五', '六'];
+
+// 与学生出勤页同样的滚轮组件
+const AppleWheelPicker = ({ value, options, onChange, label }) => {
+  const containerRef = useRef(null);
+  const itemRefs = useRef({});
+
+  useEffect(() => {
+    const el = itemRefs.current[value];
+    const container = containerRef.current;
+    if (el && container) {
+      const top = el.offsetTop - container.clientHeight / 2 + el.clientHeight / 2;
+      container.scrollTo({ top, behavior: 'smooth' });
+    }
+  }, [value]);
+
+  return (
+    <div className="flex flex-col items-center">
+      <span className="text-xs text-gray-400 mb-2 font-medium">{label}</span>
+      <div
+        ref={containerRef}
+        className="relative h-32 w-24 overflow-y-scroll snap-y snap-mandatory no-scrollbar bg-gray-50 rounded-xl border border-gray-100"
+      >
+        <div className="absolute top-1/2 left-0 w-full h-8 -translate-y-1/2 border-y border-blue-500/20 bg-blue-50/50 pointer-events-none"></div>
+        <div className="py-12">
+          {options.map((opt) => (
+            <div
+              key={opt.value}
+              ref={(node) => (itemRefs.current[opt.value] = node)}
+              onClick={() => onChange(opt.value)}
+              className={`h-8 flex items-center justify-center snap-center cursor-pointer transition-all duration-300 ${
+                value === opt.value ? 'text-blue-600 font-bold text-lg' : 'text-gray-400 text-sm scale-90'
+              }`}
+            >
+              {opt.label}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function NewSessionPage() {
   const { courseId } = useParams();
@@ -237,64 +284,36 @@ export default function NewSessionPage() {
               <div className="time-row">
                 <div className="form-field" style={{ flex: 1 }}>
                   <label>开始</label>
-                  <div className="time-picker">
-                    <select
+                  <div className="flex gap-4 items-center justify-center bg-white p-2 rounded-xl border border-gray-100">
+                    <AppleWheelPicker
+                      label="小时"
                       value={b.startHour}
-                      onChange={(e) => handleTimeChange(b.id, 'startHour', e.target.value)}
-                      size={5}
-                      className="time-wheel"
-                    >
-                      {hourOptions.map((h) => (
-                        <option key={h} value={h}>
-                          {h}
-                        </option>
-                      ))}
-                    </select>
-                    <span className="time-sep">:</span>
-                    <select
+                      options={hourOptions}
+                      onChange={(val) => handleTimeChange(b.id, 'startHour', val)}
+                    />
+                    <AppleWheelPicker
+                      label="分钟"
                       value={b.startMinute}
-                      onChange={(e) => handleTimeChange(b.id, 'startMinute', e.target.value)}
-                      size={5}
-                      className="time-wheel"
-                    >
-                      {minuteOptions.map((m) => (
-                        <option key={m} value={m}>
-                          {m}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="time-display">{fmt(b.startHour, b.startMinute)}</div>
+                      options={minuteOptions}
+                      onChange={(val) => handleTimeChange(b.id, 'startMinute', val)}
+                    />
                   </div>
                 </div>
                 <div className="form-field" style={{ flex: 1 }}>
                   <label>结束</label>
-                  <div className="time-picker">
-                    <select
+                  <div className="flex gap-4 items-center justify-center bg-white p-2 rounded-xl border border-gray-100">
+                    <AppleWheelPicker
+                      label="小时"
                       value={b.endHour}
-                      onChange={(e) => handleTimeChange(b.id, 'endHour', e.target.value)}
-                      size={5}
-                      className="time-wheel"
-                    >
-                      {hourOptions.map((h) => (
-                        <option key={h} value={h}>
-                          {h}
-                        </option>
-                      ))}
-                    </select>
-                    <span className="time-sep">:</span>
-                    <select
+                      options={hourOptions}
+                      onChange={(val) => handleTimeChange(b.id, 'endHour', val)}
+                    />
+                    <AppleWheelPicker
+                      label="分钟"
                       value={b.endMinute}
-                      onChange={(e) => handleTimeChange(b.id, 'endMinute', e.target.value)}
-                      size={5}
-                      className="time-wheel"
-                    >
-                      {minuteOptions.map((m) => (
-                        <option key={m} value={m}>
-                          {m}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="time-display">{fmt(b.endHour, b.endMinute)}</div>
+                      options={minuteOptions}
+                      onChange={(val) => handleTimeChange(b.id, 'endMinute', val)}
+                    />
                   </div>
                   <span style={{ fontSize: 12, color: '#64748b' }}>
                     若未选或早于开始时间，会自动跟随开始时间

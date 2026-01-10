@@ -38,6 +38,9 @@ export default function NewStudentPage() {
     <div className="page-card">
       <div className="page-header">
         <h2 className="page-title">新建学生</h2>
+        <button className="button secondary" type="button" onClick={() => navigate('/students')}>
+          返回列表
+        </button>
       </div>
       <form onSubmit={handleSubmit}>
         <div className="form-field">

@@ -18,7 +18,7 @@ function buildMonthDays(year, month) {
   const date = new Date(Date.UTC(year, month, 1));
   while (date.getUTCMonth() === month) {
     days.push(new Date(date));
-    date.setUTCDate(date.setUTCDate() + 1);
+    date.setUTCDate(date.getUTCDate() + 1);
   }
   return days;
 }
