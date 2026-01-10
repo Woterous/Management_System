@@ -1,10 +1,18 @@
 import axios from 'axios';
 import { getToken, clearToken } from './auth';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+if (!API_BASE_URL) {
+  console.error('❌ VITE_API_BASE_URL is not defined');
+}
+
 const http = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
+  baseURL: API_BASE_URL,
   timeout: 10000,
 });
+
+export default http;
 
 http.interceptors.request.use((config) => {
   const token = getToken();
