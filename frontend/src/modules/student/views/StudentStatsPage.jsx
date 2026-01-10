@@ -32,16 +32,32 @@ const statusColors = {
 
 // --- 新增：iOS 风格滚轮组件 ---
 const AppleWheelPicker = ({ value, options, onChange, label }) => {
+  const containerRef = useRef(null);
+  const itemRefs = useRef({});
+
+  useEffect(() => {
+    const el = itemRefs.current[value];
+    const container = containerRef.current;
+    if (el && container) {
+      const top = el.offsetTop - container.clientHeight / 2 + el.clientHeight / 2;
+      container.scrollTo({ top, behavior: 'smooth' });
+    }
+  }, [value]);
+
   return (
     <div className="flex flex-col items-center">
       <span className="text-xs text-gray-400 mb-2 font-medium">{label}</span>
-      <div className="relative h-32 w-24 overflow-y-scroll snap-y snap-mandatory no-scrollbar bg-gray-50 rounded-xl border border-gray-100">
+      <div
+        ref={containerRef}
+        className="relative h-32 w-24 overflow-y-scroll snap-y snap-mandatory no-scrollbar bg-gray-50 rounded-xl border border-gray-100"
+      >
         {/* 选中框高亮 */}
         <div className="absolute top-1/2 left-0 w-full h-8 -translate-y-1/2 border-y border-blue-500/20 bg-blue-50/50 pointer-events-none"></div>
         <div className="py-12">
           {options.map((opt) => (
             <div
               key={opt.value}
+              ref={(node) => (itemRefs.current[opt.value] = node)}
               onClick={() => onChange(opt.value)}
               className={`h-8 flex items-center justify-center snap-center cursor-pointer transition-all duration-300 ${
                 value === opt.value ? 'text-blue-600 font-bold text-lg' : 'text-gray-400 text-sm scale-90'
