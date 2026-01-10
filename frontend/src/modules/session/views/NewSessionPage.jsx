@@ -184,7 +184,7 @@ export default function NewSessionPage() {
   return (
     <div className="page-card">
       <div className="page-header">
-        <h2 className="page-title">新增课次（批量）</h2>
+        <h2 className="page-title">新增课次</h2>
       </div>
       <form onSubmit={handleSubmit}>
         <div className="form-field">
@@ -197,7 +197,7 @@ export default function NewSessionPage() {
           return (
             <div key={b.id} className="date-block">
               <div className="date-block-header">
-                <strong>课程日期格子 {idx + 1}</strong>
+                <strong>时间段 {idx + 1}</strong>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                   <button type="button" className="button secondary" onClick={() => changeMonth(b.id, -1)}>
                     上个月
