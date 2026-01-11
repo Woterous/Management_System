@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Routes, Route, Navigate, Outlet, NavLink } from 'react-router-dom';
 import LoginPage from '../modules/auth/views/LoginPage';
 import WeekSchedulePage from '../modules/session/views/WeekSchedulePage';
@@ -20,6 +21,7 @@ function RequireAuth() {
 }
 
 function AppLayout() {
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const navItems = [
     { to: '/', label: '课表', icon: '📅' },
     { to: '/courses', label: '课程', icon: '📚' },
@@ -41,15 +43,43 @@ function AppLayout() {
         <button
           type="button"
           className="bottom-nav-item"
-          onClick={() => {
-            clearToken();
-            window.location.href = '/login';
-          }}
+          onClick={() => setShowLogoutConfirm(true)}
         >
           <span className="bottom-nav-icon">🚪</span>
           <span className="bottom-nav-label">退出</span>
         </button>
       </nav>
+
+      {showLogoutConfirm && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: 'rgba(15,23,42,0.45)' }}
+        >
+          <div className="bg-white rounded-2xl shadow-2xl w-[320px] p-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <h3 className="text-lg font-bold text-slate-900 mb-2">确认退出？</h3>
+            <p className="text-sm text-slate-500 mb-6">退出后需要重新登录才能继续使用。</p>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                className="flex-1 py-3 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition-all"
+                onClick={() => setShowLogoutConfirm(false)}
+              >
+                取消
+              </button>
+              <button
+                type="button"
+                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-rose-500 to-red-500 text-white font-bold shadow-lg hover:opacity-90 transition-all active:scale-95"
+                onClick={() => {
+                  clearToken();
+                  window.location.href = '/login';
+                }}
+              >
+                确认退出
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
