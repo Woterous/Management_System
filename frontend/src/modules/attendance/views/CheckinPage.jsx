@@ -70,6 +70,7 @@ export default function CheckinPage() {
     try {
       if (session.status === 'scheduled') {
         await openSession(sessionId);
+        setSession((prev) => ({ ...prev, status: 'open' }));
       }
       await saveAttendance(
         sessionId,
@@ -80,6 +81,7 @@ export default function CheckinPage() {
         }))
       );
       await closeSession(sessionId);
+      setSession((prev) => ({ ...prev, status: 'closed' }));
       setToast('签到已成功保存并结课');
       setTimeout(() => navigate('/'), 1200);
     } catch (err) {
@@ -91,6 +93,7 @@ export default function CheckinPage() {
   const handleOpen = async () => {
     try {
       await openSession(sessionId);
+      setSession((prev) => ({ ...prev, status: 'open' }));
       await load();
     } catch (err) {
       setError(err.response?.data?.error || '无法开始课次');
@@ -100,6 +103,7 @@ export default function CheckinPage() {
   const handleClose = async () => {
     try {
       await closeSession(sessionId);
+      setSession((prev) => ({ ...prev, status: 'closed' }));
       await load();
     } catch (err) {
       setError(err.response?.data?.error || '无法关闭课次');
@@ -137,7 +141,11 @@ export default function CheckinPage() {
           <div className="text-center flex-1 px-4">
             <h1 className="text-lg font-black text-slate-900 truncate">签到 · {session?.course_title || session?.title}</h1>
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              {session?.status === 'open' ? '🟢 授课中' : session?.status === 'completed' ? '⚪️ 已结课' : '🔵 未开始'}
+              {session?.status === 'open'
+                ? '🟢 授课中'
+                : session?.status === 'completed' || session?.status === 'closed'
+                ? '⚪️ 已结课'
+                : '🔵 未开始'}
             </p>
           </div>
           <div className="w-10"></div>

@@ -100,8 +100,21 @@ export default function StudentStatsPage() {
     setLoading(true);
     getStudentCourseStats(courseId, studentId)
       .then((res) => {
-        setSummary(res.summary || {});
-        setRecords(res.records || []);
+        // 后端返回 snake_case，前端统一 camelCase，避免统计错乱
+        const normalizedSummary = {
+          present: res.summary?.present || 0,
+          late: res.summary?.late || 0,
+          leave: res.summary?.leave || 0,
+          absent: res.summary?.absent || 0,
+        };
+        const normalizedRecords = (res.records || []).map((r) => ({
+          ...r,
+          startsAt: r.starts_at || r.startsAt,
+          endsAt: r.ends_at || r.endsAt,
+          status: r.status,
+        }));
+        setSummary(normalizedSummary);
+        setRecords(normalizedRecords);
       })
       .catch((err) => setError(err.response?.data?.error || '加载统计失败'))
       .finally(() => setLoading(false));
