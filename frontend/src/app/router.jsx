@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Routes, Route, Navigate, Outlet, NavLink } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet, NavLink, useLocation } from 'react-router-dom';
 import { Calendar, BookOpen, Users, LogOut } from 'lucide-react'; // 推荐安装 lucide-react
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -24,12 +24,14 @@ function RequireAuth() {
 
 function AppLayout() {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const location = useLocation();
   
   const navItems = [
     { to: '/', label: '课表', icon: <Calendar size={20} /> },
     { to: '/courses', label: '课程', icon: <BookOpen size={20} /> },
     { to: '/students', label: '学生', icon: <Users size={20} /> },
   ];
+  const showNav = ['/', '/courses', '/students'].includes(location.pathname);
 
   return (
     <div className="relative min-h-screen bg-slate-50/50">
@@ -37,55 +39,67 @@ function AppLayout() {
         <Outlet />
       </main>
 
-      {/* 紧凑型垂直布局导航栏 */}
-      <nav className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 px-2 py-1.5 bg-white/85 backdrop-blur-xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.08)] rounded-[2.5rem] flex items-center gap-1">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.to === '/'}
-            className={({ isActive }) => `
-              relative flex flex-col items-center justify-center min-w-[70px] py-2 rounded-[2rem] transition-all duration-300 group
-              ${isActive ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'}
-            `}
-          >
-            {({ isActive }) => (
-              <>
-                {/* 选中的胶囊背景 */}
-                {isActive && (
-                  <motion.div
-                    layoutId="nav-pill"
-                    className="absolute inset-0 bg-indigo-50/80 rounded-[1.8rem] -z-10"
-                    transition={{ type: 'spring', bounce: 0.15, duration: 0.5 }}
-                  />
-                )}
-                
-                {/* 图标：保持在上方，间距极小 */}
-                <span className={`transition-all duration-300 ${isActive ? 'scale-110 -translate-y-0.5' : 'opacity-80'}`}>
-                  {item.icon}
-                </span>
+      {/* 紧凑型垂直布局导航栏：仅一级页面显示，带向下滑出的动画 */}
+      <AnimatePresence>
+        {showNav && (
+          <div className="fixed inset-x-0 bottom-5 z-50 flex justify-center">
+            <motion.nav
+              initial={{ y: 80, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 80, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 250, damping: 22 }}
+              className="px-2 py-1.5 bg-white/85 backdrop-blur-xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.08)] rounded-[2.5rem] flex items-center gap-1"
+            >
+              {navItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.to === '/'}
+                  className={({ isActive }) => `
+                    relative flex flex-col items-center justify-center min-w-[70px] py-2 rounded-[2rem] transition-all duration-300 group
+                    ${isActive ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'}
+                  `}
+                >
+                  {({ isActive }) => (
+                    <>
+                      {/* 选中的胶囊背景 */}
+                      {isActive && (
+                        <motion.div
+                          layoutId="nav-pill"
+                          className="absolute inset-0 bg-indigo-50/80 rounded-[1.8rem] -z-10"
+                          transition={{ type: 'spring', bounce: 0.15, duration: 0.5 }}
+                        />
+                      )}
+                      
+                      {/* 图标：保持在上方，间距极小 */}
+                      <span className={`transition-all duration-300 ${isActive ? 'scale-110 -translate-y-0.5' : 'opacity-80'}`}>
+                        {item.icon}
+                      </span>
 
-                {/* 文字：紧贴图标下方 */}
-                <span className={`text-[11px] font-bold tracking-tighter mt-0.5 transition-all ${isActive ? 'opacity-100' : 'opacity-70'}`}>
-                  {item.label}
-                </span>
-              </>
-            )}
-          </NavLink>
-        ))}
+                      {/* 文字：紧贴图标下方 */}
+                      <span className={`text-[11px] font-bold tracking-tighter mt-0.5 transition-all ${isActive ? 'opacity-100' : 'opacity-70'}`}>
+                        {item.label}
+                      </span>
+                    </>
+                  )}
+                </NavLink>
+              ))}
 
-        {/* 极细分割线 */}
-        <div className="w-[1px] h-6 bg-slate-100 mx-1" />
+              {/* 极细分割线 */}
+              <div className="w-[1px] h-6 bg-slate-100 mx-1" />
 
-        <button
-          type="button"
-          onClick={() => setShowLogoutConfirm(true)}
-          className="flex flex-col items-center justify-center min-w-[70px] py-2 text-slate-400 hover:text-rose-500 transition-colors group"
-        >
-          <LogOut size={20} className="group-active:translate-x-0.5 transition-transform" />
-          <span className="text-[11px] font-bold tracking-tighter mt-0.5">退出</span>
-        </button>
-      </nav>
+              <button
+                type="button"
+                onClick={() => setShowLogoutConfirm(true)}
+                className="flex flex-col items-center justify-center min-w-[70px] py-2 text-slate-400 hover:text-rose-500 transition-colors group"
+              >
+                <LogOut size={20} className="group-active:translate-x-0.5 transition-transform" />
+                <span className="text-[11px] font-bold tracking-tighter mt-0.5">退出</span>
+              </button>
+            </motion.nav>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* 退出确认弹窗 */}
       <AnimatePresence>

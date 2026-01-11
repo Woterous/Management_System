@@ -261,9 +261,21 @@ export default function App() {
     <div className="min-h-screen bg-[#f8fafc] pb-24 font-sans text-slate-900">
       {/* 顶部导航条 */}
       <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 py-4 flex items-center justify-between">
-        <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-          新增课次
-        </h1>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-500 transition-all active:scale-95"
+            aria-label="返回课程详情"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            新增课次
+          </h1>
+        </div>
         {courseTitle && (
           <div className="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
             课程：{courseTitle}
