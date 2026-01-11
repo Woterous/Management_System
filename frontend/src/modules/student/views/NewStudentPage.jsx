@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createStudent } from '../service/studentService';
 
 export default function NewStudentPage() {
   const navigate = useNavigate();
@@ -19,20 +20,15 @@ export default function NewStudentPage() {
     setError('');
     setLoading(true);
     try {
-      // 保持原有接口逻辑，使用 window 对象避免编译错误
-      if (typeof window.createStudent === 'function') {
-        await window.createStudent({
-          name: form.name,
-          studentNo: form.studentNo || undefined,
-          age: form.age ? Number(form.age) : undefined,
-          note: form.note || undefined,
-        });
-      } else {
-        throw new Error('API 服务未就绪，请检查服务引用路径。');
-      }
+      await createStudent({
+        name: form.name,
+        studentNo: form.studentNo || undefined,
+        age: form.age ? Number(form.age) : undefined,
+        note: form.note || undefined,
+      });
       navigate(-1);
     } catch (err) {
-      setError(err.message || '创建学生失败，请重试');
+      setError(err.response?.data?.error || err.message || '创建学生失败，请重试');
     } finally {
       setLoading(false);
     }
