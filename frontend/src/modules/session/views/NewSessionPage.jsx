@@ -427,6 +427,19 @@ export default function App() {
             </div>
           )}
 
+          {/* 内联添加按钮卡片 */}
+          <button
+            type="button"
+            onClick={addBlock}
+            className="w-full py-8 border-2 border-dashed border-slate-200 rounded-3xl flex flex-col items-center justify-center gap-2 text-slate-400 hover:border-blue-400 hover:text-blue-500 hover:bg-blue-50/50 transition-all duration-300 group"
+          >
+            <div className="p-2 bg-slate-100 rounded-full group-hover:bg-blue-100 group-hover:scale-110 transition-all">
+              <IconPlus />
+            </div>
+            <span className="text-sm font-bold">添加另一个时间段</span>
+            <p className="text-[11px] opacity-60">点击为课程设置不同的上课时间或月份</p>
+          </button>
+
           {/* 提交按钮 */}
           <button 
             type="submit" 
@@ -449,15 +462,7 @@ export default function App() {
         </form>
       </div>
 
-      {/* 悬浮添加按钮 */}
-      <button 
-        type="button" 
-        onClick={addBlock}
-        className="fixed bottom-8 right-8 w-14 h-14 bg-white text-blue-600 shadow-2xl rounded-full flex items-center justify-center hover:scale-110 active:scale-90 transition-all border border-slate-100 z-40 group"
-      >
-        <div className="absolute inset-0 bg-blue-50 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300 z-0" />
-        <div className="relative z-10"><IconPlus /></div>
-      </button>
+      
 
       <style dangerouslySetInnerHTML={{ __html: `
         .no-scrollbar::-webkit-scrollbar { display: none; }
